@@ -1,0 +1,1605 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>粉彩小窩｜租屋家具擺放模擬器</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;800&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#FFF6EC; --card:#FFFFFF; --ink:#5B4E63; --ink-soft:#9A8EA3;
+  --pink:#F9C6CF; --pink-deep:#F497A9; --mint:#B8E6D3; --lav:#D7C6F2;
+  --yellow:#FFE8A3; --sky:#BFE0F5; --coral:#FF8E7A; --warn:#FF8A8A;
+  --line:#F3E4D8; --radius:18px; --shadow:0 6px 22px rgba(214,163,176,.22);
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{
+  background:var(--bg);color:var(--ink);
+  font-family:'Nunito','Noto Sans TC',system-ui,-apple-system,sans-serif;
+  display:flex;flex-direction:column;height:100vh;overflow:hidden;
+}
+button,input,select{font:inherit;color:inherit}
+header{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:12px 20px;flex-wrap:wrap;
+}
+.brand{display:flex;align-items:center;gap:12px}
+.logo{
+  width:46px;height:46px;border-radius:16px;display:grid;place-items:center;font-size:26px;
+  background:linear-gradient(135deg,var(--pink),var(--lav));box-shadow:var(--shadow);
+}
+.brand h1{margin:0;font-size:22px;font-weight:800;letter-spacing:1px}
+.brand p{margin:0;font-size:13px;color:var(--ink-soft)}
+.seg{display:flex;background:#fff;border-radius:999px;padding:4px;box-shadow:var(--shadow)}
+.seg button{
+  border:0;background:transparent;padding:8px 16px;border-radius:999px;cursor:pointer;font-weight:700;
+  transition:.2s;
+}
+.seg button.on{background:var(--pink);color:#6b3d4a}
+main{flex:1;display:flex;gap:16px;padding:0 16px 16px;min-height:0}
+aside{
+  width:340px;flex-shrink:0;overflow-y:auto;display:flex;flex-direction:column;gap:14px;
+  padding:2px 6px 8px 2px;
+}
+aside::-webkit-scrollbar{width:8px}
+aside::-webkit-scrollbar-thumb{background:var(--pink);border-radius:8px}
+.card{background:var(--card);border-radius:var(--radius);padding:14px 16px;box-shadow:var(--shadow)}
+.card h2{margin:0 0 10px;font-size:16px;font-weight:800}
+.note{margin:8px 0 0;font-size:12.5px;color:var(--ink-soft);line-height:1.5}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.grid2{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.f{display:flex;flex-direction:column;gap:4px;font-size:12.5px;position:relative}
+.f span{color:var(--ink-soft);font-weight:700}
+.f input,.f select{
+  width:100%;border:2px solid var(--line);border-radius:12px;padding:7px 30px 7px 10px;background:#FFFCF8;
+  outline:none;transition:.2s;
+}
+.f select{padding-right:8px}
+.f input:focus,.f select:focus{border-color:var(--pink-deep)}
+.f em{position:absolute;right:10px;bottom:9px;font-style:normal;font-size:11px;color:var(--ink-soft)}
+.f.wide{grid-column:1/-1}
+.tabs{display:flex;gap:6px;margin-bottom:10px}
+.tabs button{
+  flex:1;border:0;border-radius:12px;padding:7px 4px;cursor:pointer;background:#FFF3F5;font-weight:700;font-size:13px;
+}
+.tabs button.on{background:var(--lav);color:#4d3a73}
+.lib{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.lib button{
+  border:2px solid var(--line);background:#FFFCF8;border-radius:14px;padding:8px 4px;cursor:pointer;
+  display:flex;flex-direction:column;align-items:center;gap:2px;transition:.15s;
+}
+.lib button:hover{border-color:var(--pink-deep);transform:translateY(-2px);background:#FFF0F3}
+.lib i{font-style:normal;font-size:22px}
+.lib b{font-size:12.5px}
+.lib small{font-size:10.5px;color:var(--ink-soft)}
+.btns{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.btn{
+  border:0;border-radius:12px;padding:8px 12px;cursor:pointer;font-weight:700;font-size:13px;
+  background:var(--mint);transition:.15s;
+}
+.btn:hover{filter:brightness(.96);transform:translateY(-1px)}
+.btn.lav{background:var(--lav)}
+.btn.yellow{background:var(--yellow)}
+.btn.danger{background:#FFD9D9;color:#a34a4a}
+.empty{text-align:center;color:var(--ink-soft);margin:8px 0;line-height:1.8;font-size:14px}
+.sel-head{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.sel-icon{width:42px;height:42px;border-radius:14px;background:#FFF0F3;display:grid;place-items:center;font-size:22px}
+.sel-head b{display:block;font-size:15px}
+.sel-head small{color:var(--ink-soft);font-size:12px}
+.swatches{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.swatches button{width:26px;height:26px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 0 2px var(--line);cursor:pointer}
+.swatches button.on{box-shadow:0 0 0 2px var(--pink-deep)}
+.count{font-size:12px;color:var(--ink-soft);font-weight:700;margin-left:4px}
+.list{display:flex;flex-direction:column;gap:6px;max-height:300px;overflow-y:auto;padding-right:2px}
+.list::-webkit-scrollbar{width:6px}
+.list::-webkit-scrollbar-thumb{background:var(--pink);border-radius:6px}
+.row{
+  display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:12px;border:2px solid var(--line);
+  background:#FFFCF8;cursor:pointer;transition:.15s;
+}
+.row:hover{border-color:var(--pink)}
+.row.on{border-color:var(--pink-deep);background:#FFF0F3}
+.row.bad{background:#FFEDED}
+.row.off{opacity:.45}
+.row .ic{font-size:18px;width:24px;text-align:center}
+.row .nm{flex:1;min-width:0;font-size:13px;line-height:1.3}
+.row .nm b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row .nm small{color:var(--ink-soft);font-size:11px}
+.row .flag{font-size:13px}
+.row button{border:0;background:transparent;cursor:pointer;font-size:15px;padding:2px 4px;border-radius:8px}
+.row button:hover{background:#fff}
+.list .none{text-align:center;color:var(--ink-soft);font-size:13px;padding:10px 0}
+.info{margin-top:10px;font-size:12.5px;background:#F6F0FF;border-radius:12px;padding:8px 10px;line-height:1.6}
+
+#stage{
+  flex:1;position:relative;border-radius:24px;overflow:hidden;min-height:0;
+  background:linear-gradient(180deg,#FFF1F3,#FDF6EE);box-shadow:var(--shadow);
+}
+#stage canvas{display:block;width:100%;height:100%;outline:none}
+.labels{position:absolute;inset:0;pointer-events:none}
+.tag{
+  background:rgba(255,255,255,.92);border-radius:10px;padding:3px 8px;font-size:11.5px;line-height:1.35;
+  text-align:center;box-shadow:0 2px 8px rgba(150,110,130,.2);white-space:nowrap;color:var(--ink);
+}
+.tag b{display:block;font-size:12px}
+.tag span{color:var(--ink-soft)}
+.tag-socket{background:#FFF6D6}
+.tag-beam{background:#F1E8FB}
+.dist{
+  background:var(--coral);color:#fff;font-weight:800;font-size:11.5px;border-radius:999px;padding:2px 8px;
+  white-space:nowrap;box-shadow:0 2px 6px rgba(255,142,122,.4);
+}
+.tips{
+  position:absolute;top:12px;left:12px;right:12px;display:flex;justify-content:space-between;align-items:flex-start;gap:8px;
+  pointer-events:none;
+}
+.tips .box{
+  pointer-events:auto;background:rgba(255,255,255,.88);backdrop-filter:blur(6px);border-radius:14px;padding:8px 12px;
+  font-size:12.5px;line-height:1.6;box-shadow:var(--shadow);max-width:560px;
+}
+.tips .box button{border:0;background:transparent;cursor:pointer;font-size:13px;margin-left:6px;color:var(--ink-soft)}
+.status{
+  position:absolute;left:12px;right:12px;bottom:12px;display:flex;flex-direction:column;gap:8px;pointer-events:none;
+}
+#warn{display:flex;flex-direction:column;gap:6px;max-height:150px;overflow-y:auto;pointer-events:auto;align-items:flex-start}
+#warn div{
+  border-radius:12px;padding:6px 12px;font-size:12.5px;font-weight:700;box-shadow:var(--shadow);cursor:pointer;
+  background:rgba(255,255,255,.95);
+}
+#warn .err{background:#FFE3E3;color:#a13d3d}
+#warn .hint{background:#FFF4CC;color:#7d6420}
+#warn .ok{background:#E3F7EE;color:#2f7a5b;cursor:default}
+#stat{
+  align-self:flex-start;background:rgba(255,255,255,.92);border-radius:999px;padding:7px 14px;font-size:12.5px;font-weight:700;
+  box-shadow:var(--shadow);pointer-events:auto;
+}
+.toast{
+  position:absolute;left:50%;top:70px;transform:translate(-50%,-10px);background:var(--ink);color:#fff;
+  padding:8px 16px;border-radius:999px;font-size:13px;font-weight:700;opacity:0;transition:.25s;pointer-events:none;
+}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.loading{position:absolute;inset:0;display:grid;place-items:center;font-weight:800;color:var(--ink-soft)}
+
+@media (max-width:860px){
+  body{height:auto;overflow:auto}
+  main{flex-direction:column;padding:0 12px 12px}
+  #stage{order:-1;height:62vh;flex:none}
+  aside{width:100%;overflow:visible;padding:0}
+  .tips .box{font-size:11.5px}
+}
+</style>
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
+</head>
+<body>
+<header>
+  <div class="brand">
+    <div class="logo">🏠</div>
+    <div><h1>粉彩小窩</h1><p>租屋家具擺放模擬器・看屋前先擺擺看</p></div>
+  </div>
+  <div class="seg" id="viewSeg">
+    <button data-mode="3d" class="on">🧸 3D 視角</button>
+    <button data-mode="top">🗺️ 俯視平面</button>
+  </div>
+</header>
+
+<main>
+  <aside>
+    <section class="card">
+      <h2>📐 房間尺寸</h2>
+      <div class="grid3">
+        <label class="f"><span>寬（左右）</span><input id="roomW" type="number" min="150" max="1500"><em>cm</em></label>
+        <label class="f"><span>長（上下）</span><input id="roomD" type="number" min="150" max="1500"><em>cm</em></label>
+        <label class="f"><span>天花板高</span><input id="roomH" type="number" min="200" max="400"><em>cm</em></label>
+      </div>
+      <div class="grid3" style="margin-top:8px">
+        <label class="f"><span>房間形狀</span><select id="roomShape">
+          <option value="none">長方形</option>
+          <option value="NW">缺左上角</option>
+          <option value="NE">缺右上角</option>
+          <option value="SW">缺左下角</option>
+          <option value="SE">缺右下角</option>
+        </select></label>
+        <label class="f notchf"><span>缺角寬</span><input id="notchW" type="number" min="20" max="1450"><em>cm</em></label>
+        <label class="f notchf"><span>缺角長</span><input id="notchD" type="number" min="20" max="1450"><em>cm</em></label>
+      </div>
+      <p class="note">先用捲尺量好房間，輸入實際尺寸（單位：公分）。</p>
+    </section>
+
+    <section class="card">
+      <h2>🧺 新增物件</h2>
+      <div class="tabs" id="libTabs">
+        <button data-cat="furn" class="on">🛋️ 家具</button>
+        <button data-cat="bath">🛁 衛浴</button>
+        <button data-cat="struct">🧱 結構</button>
+      </div>
+      <div class="lib" id="lib"></div>
+      <p class="note" id="libNote"></p>
+    </section>
+
+    <section class="card">
+      <h2>✏️ 編輯物件</h2>
+      <div id="selBox"></div>
+    </section>
+
+    <section class="card">
+      <h2>📋 物件清單 <small id="listCount" class="count"></small></h2>
+      <div class="tabs" id="listTabs">
+        <button data-f="all" class="on">全部</button>
+        <button data-f="furn">🛋️ 家具</button>
+        <button data-f="bath">🛁 衛浴</button>
+        <button data-f="struct">🧱 結構</button>
+      </div>
+      <div class="list" id="list"></div>
+      <p class="note">點一下名稱就能選取。👁️ 可以暫時隱藏物件，隱藏的物件不會檢查碰撞。</p>
+    </section>
+
+    <section class="card">
+      <h2>💾 存檔與匯出</h2>
+      <p class="note" style="margin-top:0">擺放結果會自動存在這台電腦的瀏覽器裡，下次打開還在。</p>
+      <div class="btns">
+        <button class="btn yellow" id="btnPng">📸 存成圖片</button>
+        <button class="btn lav" id="btnSample">🏡 載入範例</button>
+        <button class="btn danger" id="btnClear">🧹 清空物件</button>
+      </div>
+    </section>
+  </aside>
+
+  <div id="stage">
+    <div class="loading" id="loading">正在搬家具進來…</div>
+    <div class="tips"><div class="box" id="tips"></div></div>
+    <div class="status"><div id="warn"></div><div id="stat"></div></div>
+    <div class="toast" id="toast"></div>
+  </div>
+</main>
+
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
+import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
+
+/* ================= 物件資料庫 ================= */
+const LIB = {
+  bed_single:{cat:'furn',kind:'furniture',name:'單人床',icon:'🛏️',w:90,d:190,h:45,color:'#BFE0F5'},
+  bed_double:{cat:'furn',kind:'furniture',name:'雙人床',icon:'🛏️',w:150,d:190,h:45,color:'#D7C6F2'},
+  desk:{cat:'furn',kind:'furniture',name:'書桌',icon:'✏️',w:120,d:60,h:75,color:'#FFE8A3'},
+  chair:{cat:'furn',kind:'furniture',name:'椅子',icon:'🪑',w:45,d:45,h:85,color:'#B8E6D3'},
+  wardrobe:{cat:'furn',kind:'furniture',name:'衣櫃',icon:'👗',w:90,d:60,h:200,color:'#F9C6CF'},
+  bookshelf:{cat:'furn',kind:'furniture',name:'書櫃',icon:'📚',w:80,d:30,h:180,color:'#FFE8A3'},
+  sofa:{cat:'furn',kind:'furniture',name:'沙發',icon:'🛋️',w:180,d:85,h:80,color:'#B8E6D3'},
+  fridge:{cat:'furn',kind:'furniture',name:'小冰箱',icon:'🧊',w:50,d:55,h:85,color:'#BFE0F5'},
+  tvstand:{cat:'furn',kind:'furniture',name:'電視櫃',icon:'📺',w:150,d:40,h:50,color:'#E8D5C4'},
+  dresser:{cat:'furn',kind:'furniture',name:'梳妝台',icon:'💄',w:80,d:40,h:75,color:'#F9C6CF'},
+  washer:{cat:'furn',kind:'furniture',name:'洗衣機',icon:'🫧',w:60,d:60,h:90,color:'#F4F1F8'},
+  toilet:{cat:'bath',kind:'furniture',name:'馬桶',icon:'🚽',w:40,d:70,h:75,color:'#FBF8FF'},
+  sink:{cat:'bath',kind:'furniture',name:'洗手台',icon:'🚰',w:60,d:45,h:85,color:'#BFE0F5'},
+  shower:{cat:'bath',kind:'furniture',name:'淋浴間',icon:'🚿',w:90,d:90,h:200,color:'#CFEFFF'},
+  bathtub:{cat:'bath',kind:'furniture',name:'浴缸',icon:'🛁',w:150,d:75,h:55,color:'#FBF8FF'},
+  column:{cat:'struct',kind:'column',name:'柱子',icon:'🧱',w:50,d:50,h:0,color:'#E9DDEB'},
+  beam:{cat:'struct',kind:'beam',name:'樑',icon:'🏗️',w:300,d:40,h:50,color:'#DCCAEB'},
+  door:{cat:'struct',kind:'door',name:'門',icon:'🚪',w:80},
+  window:{cat:'struct',kind:'window',name:'窗戶',icon:'🪟',w:120,sill:90,wh:120,ledge:0},
+  baywindow:{cat:'struct',kind:'window',name:'凸窗窗台',icon:'🌤️',w:150,sill:50,wh:150,ledge:45},
+  socket:{cat:'struct',kind:'socket',name:'插座',icon:'🔌',stype:'一般插座'},
+  zone:{cat:'struct',kind:'zone',name:'隔間區域',zname:'儲藏室',icon:'🧩',w:120,d:120,h:0,color:'#FFF3D6'},
+  bathzone:{cat:'bath',kind:'zone',name:'衛浴隔間',zname:'衛浴',icon:'🧼',w:150,d:200,h:0,color:'#CFEFFF'},
+};
+const ZONE_PALETTE = ['#CFEFFF','#E3F4EA','#F1E8FB','#FFF3D6','#FDE3E8','#ECE6E0'];
+const SIDE_NAMES = {N:'上方',S:'下方',W:'左側',E:'右側'};
+const ZT = 10; // 隔間牆厚度
+const CAT_NOTE = {
+  furn:'點一下就會放進房間中央，再用滑鼠拖到想要的位置。',
+  bath:'先放「衛浴隔間」圍出浴室，再把馬桶、淋浴間放進去。衛浴設備一樣可以自訂尺寸。',
+  struct:'「隔間區域」可以圍出儲藏室、廚房等空間；房間本身缺一角的話，到上面「房間形狀」設定。柱子拉長拉寬也能當牆角凸出。',
+};
+const SOCKET_TYPES = {'一般插座':'⚡','冷氣插座':'❄️','網路孔':'🌐','電視孔':'📺'};
+const WALL_NAMES = {N:'上方牆',S:'下方牆',W:'左側牆',E:'右側牆'};
+const PALETTE = ['#BFE0F5','#D7C6F2','#B8E6D3','#FFE8A3','#F9C6CF','#FFD3B6','#E8D5C4','#FBF8FF'];
+const FLOOR_KINDS = ['furniture','column','beam','zone'];
+const isFloor = it => FLOOR_KINDS.includes(it.kind);
+const socketY = it => it.stype==='冷氣插座' ? 200 : 30;
+const STORE = 'pastel-room-v1';
+const WARN_COLOR = new THREE.Color('#FF6B6B');
+
+/* ================= 狀態 ================= */
+function wallLen(wall, room=state.room){ return (wall==='N'||wall==='S') ? room.w : room.d; }
+
+function makeItem(type, room, id){
+  const L = LIB[type];
+  const it = {id, type, kind:L.kind, name:L.name, rot:0};
+  if(FLOOR_KINDS.includes(L.kind)){
+    Object.assign(it,{w:L.w,d:L.d,h:L.h,color:L.color,x:room.w/2,z:room.d/2});
+    if(L.kind==='beam'){ it.w = room.w; }
+    if(L.kind==='zone'){ it.name = L.zname; it.doorSide = 'W'; it.doorW = 70; it.doorOff = 0; }
+  }else{
+    it.wall = L.kind==='door' ? 'S' : L.kind==='window' ? 'N' : 'E';
+    it.w = L.kind==='socket' ? 12 : L.w;
+    it.offset = wallLen(it.wall, room)/2;
+    if(L.kind==='door') it.hinge='L';
+    if(L.kind==='window'){ it.sill=L.sill; it.wh=L.wh; it.ledge=L.ledge; }
+    if(L.kind==='socket') it.stype=L.stype;
+  }
+  return it;
+}
+
+function defaultState(){
+  const s = {room:{w:350,d:450,h:280,notch:{corner:'none',w:100,d:100}},items:[],nextId:1};
+  const add = (type, props) => { const it = makeItem(type, s.room, s.nextId++); Object.assign(it, props); s.items.push(it); };
+  add('column',{x:25,z:25});
+  add('beam',{w:350,x:175,z:20});
+  add('window',{wall:'N',offset:175});
+  add('door',{wall:'S',offset:120,hinge:'L'});
+  add('bathzone',{x:275,z:350});
+  add('sink',{x:290,z:282.5});
+  add('toilet',{x:320,z:415,rot:2});
+  add('bed_double',{x:135,z:95});
+  add('wardrobe',{x:320,z:200,rot:1});
+  add('desk',{x:30,z:290,rot:1});
+  add('chair',{x:80,z:290,rot:3});
+  add('socket',{wall:'W',offset:260});
+  add('socket',{wall:'N',offset:300,stype:'冷氣插座'});
+  return s;
+}
+
+function loadState(){
+  try{
+    const s = JSON.parse(localStorage.getItem(STORE));
+    if(s && s.room && Array.isArray(s.items)){
+      s.items = s.items.filter(i => LIB[i.type]);
+      s.nextId = Math.max(s.nextId||1, ...s.items.map(i=>i.id+1), 1);
+      return s;
+    }
+  }catch(e){}
+  return null;
+}
+function save(){ try{ localStorage.setItem(STORE, JSON.stringify(state)); }catch(e){} }
+
+let state = loadState() || defaultState();
+let selectedId = null;
+let mode = '3d';
+const getItem = id => state.items.find(i => i.id===id);
+const sel = () => selectedId==null ? null : getItem(selectedId);
+
+/* ================= Three.js 基本設定 ================= */
+const stage = document.getElementById('stage');
+const renderer = new THREE.WebGLRenderer({antialias:true, preserveDrawingBuffer:true});
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+stage.prepend(renderer.domElement);
+const labelRenderer = new CSS2DRenderer();
+labelRenderer.domElement.className = 'labels';
+stage.insertBefore(labelRenderer.domElement, renderer.domElement.nextSibling);
+document.getElementById('loading').remove();
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color('#FFF1F3');
+
+const persp = new THREE.PerspectiveCamera(45, 1, 1, 20000);
+const ortho = new THREE.OrthographicCamera(-1,1,1,-1,1,20000);
+const ctrl3d = new OrbitControls(persp, renderer.domElement);
+ctrl3d.enableDamping = true;
+ctrl3d.maxPolarAngle = Math.PI*0.47;
+ctrl3d.minDistance = 100; ctrl3d.maxDistance = 4000;
+const ctrlTop = new OrbitControls(ortho, renderer.domElement);
+ctrlTop.enableRotate = false;
+ctrlTop.enableDamping = true;
+ctrlTop.screenSpacePanning = true;
+ctrlTop.minZoom = 0.4; ctrlTop.maxZoom = 6;
+ctrlTop.mouseButtons = {LEFT:THREE.MOUSE.PAN, MIDDLE:THREE.MOUSE.DOLLY, RIGHT:THREE.MOUSE.PAN};
+ctrlTop.touches = {ONE:THREE.TOUCH.PAN, TWO:THREE.TOUCH.DOLLY_PAN};
+ctrlTop.enabled = false;
+const cam = () => mode==='3d' ? persp : ortho;
+const activeCtrl = () => mode==='3d' ? ctrl3d : ctrlTop;
+
+scene.add(new THREE.HemisphereLight(0xffffff, 0xF6D9C8, 1.9));
+const sun = new THREE.DirectionalLight(0xffffff, 1.7);
+sun.castShadow = true;
+sun.shadow.mapSize.set(2048, 2048);
+sun.shadow.bias = -0.0004;
+sun.shadow.radius = 4;
+scene.add(sun); scene.add(sun.target);
+
+const roomGroup = new THREE.Group(); scene.add(roomGroup);
+const staticGroup = new THREE.Group(); roomGroup.add(staticGroup);
+const itemsGroup = new THREE.Group(); roomGroup.add(itemsGroup);
+const distGroup = new THREE.Group(); roomGroup.add(distGroup);
+const selGroup = new THREE.Group(); scene.add(selGroup);
+const groups = new Map();
+let walls = {};
+let aspect = 1;
+
+/* ================= 小工具 ================= */
+const lighten = (c,a) => '#'+new THREE.Color(c).lerp(new THREE.Color('#ffffff'),a).getHexString();
+const darken = (c,a) => '#'+new THREE.Color(c).lerp(new THREE.Color('#5B4E63'),a).getHexString();
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function mat(color, opts={}){ return new THREE.MeshStandardMaterial({color, roughness:.78, metalness:0, ...opts}); }
+function rbox(w,h,d,color,r=3,opts){
+  w=Math.max(w,1); h=Math.max(h,1); d=Math.max(d,1);
+  const rr = Math.min(r, w/2-0.05, h/2-0.05, d/2-0.05);
+  const g = rr>0.3 ? new RoundedBoxGeometry(w,h,d,2,rr) : new THREE.BoxGeometry(w,h,d);
+  const m = new THREE.Mesh(g, mat(color,opts));
+  m.castShadow = true; m.receiveShadow = true;
+  return m;
+}
+const at = (m,x,y,z) => { m.position.set(x,y,z); return m; };
+function disposeTree(o){
+  o.traverse(c => {
+    // 移除物件時，連同它的文字標籤一起從畫面拿掉（避免標籤殘留）
+    if(c.isCSS2DObject && c.element && c.element.parentNode) c.element.parentNode.removeChild(c.element);
+    if(c.geometry) c.geometry.dispose();
+    if(c.material){ (Array.isArray(c.material)?c.material:[c.material]).forEach(m => { if(m.map && !m.map.userData.cached) m.map.dispose(); m.dispose(); }); }
+  });
+}
+function clearGroup(g){ [...g.children].forEach(c => { g.remove(c); disposeTree(c); }); }
+function lineMat(color, dashed){
+  return dashed ? new THREE.LineDashedMaterial({color, dashSize:8, gapSize:6, transparent:true, opacity:.9})
+                : new THREE.LineBasicMaterial({color, transparent:true, opacity:.9});
+}
+function polyline(pts, color, dashed=false){
+  const geo = new THREE.BufferGeometry().setFromPoints(pts.map(p => new THREE.Vector3(p[0],p[1],p[2])));
+  const l = new THREE.Line(geo, lineMat(color, dashed));
+  if(dashed) l.computeLineDistances();
+  l.userData.noFade = true;
+  return l;
+}
+let toastTimer;
+function toast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(toastTimer); toastTimer = setTimeout(()=>t.classList.remove('show'), 1600);
+}
+
+/* ================= 房間 ================= */
+let notchMesh = null;
+function notchRect(){
+  const n = state.room.notch;
+  if(!n || n.corner==='none' || !n.corner) return null;
+  const {w:W, d:D} = state.room;
+  const x0 = n.corner[1]==='W' ? 0 : W - n.w;
+  const z0 = n.corner[0]==='N' ? 0 : D - n.d;
+  return {minX:x0, maxX:x0+n.w, minZ:z0, maxZ:z0+n.d};
+}
+function clampNotch(){
+  const r = state.room;
+  if(!r.notch) r.notch = {corner:'none', w:100, d:100};
+  r.notch.w = Math.round(Math.min(Math.max(r.notch.w, 20), r.w-50));
+  r.notch.d = Math.round(Math.min(Math.max(r.notch.d, 20), r.d-50));
+}
+function roomArea(){
+  const n = notchRect(), {w,d} = state.room;
+  return (w*d - (n ? (n.maxX-n.minX)*(n.maxZ-n.minZ) : 0)) / 10000;
+}
+function buildRoom(){
+  clearGroup(staticGroup);
+  const {w:W, d:D, h:H} = state.room;
+  roomGroup.position.set(-W/2, 0, -D/2);
+
+  const base = rbox(W+70, 16, D+70, '#FBE3E8', 8);
+  at(base, W/2, -8.2, D/2); base.castShadow = false; staticGroup.add(base);
+
+  const floor = new THREE.Mesh(new THREE.PlaneGeometry(W, D), mat('#F3DFC6', {roughness:.95}));
+  floor.rotation.x = -Math.PI/2; floor.position.set(W/2, 0, D/2); floor.receiveShadow = true;
+  staticGroup.add(floor);
+
+  const gp = [];
+  for(let x=50; x<W; x+=50) gp.push(x,.3,0, x,.3,D);
+  for(let z=50; z<D; z+=50) gp.push(0,.3,z, W,.3,z);
+  const gg = new THREE.BufferGeometry(); gg.setAttribute('position', new THREE.Float32BufferAttribute(gp,3));
+  staticGroup.add(new THREE.LineSegments(gg, new THREE.LineBasicMaterial({color:'#E3C3A6', transparent:true, opacity:.55})));
+
+  const T = 12;
+  const defs = {N:[W/2,-T/2,W+2*T,T], S:[W/2,D+T/2,W+2*T,T], W:[-T/2,D/2,T,D], E:[W+T/2,D/2,T,D]};
+  walls = {};
+  for(const k in defs){
+    const [cx,cz,sx,sz] = defs[k];
+    const m = new THREE.Mesh(new THREE.BoxGeometry(sx,H,sz), mat('#FADADD',{transparent:true, opacity:1}));
+    m.position.set(cx, H/2, cz); m.receiveShadow = true;
+    staticGroup.add(m); walls[k] = m;
+  }
+
+  // 缺角：在角落放一塊實心牆
+  notchMesh = null;
+  const n = notchRect();
+  if(n){
+    const nw = n.maxX-n.minX, nd = n.maxZ-n.minZ;
+    notchMesh = new THREE.Mesh(new THREE.BoxGeometry(nw, H, nd), mat('#F6CBD3',{transparent:true, opacity:1}));
+    notchMesh.position.set(n.minX+nw/2, H/2, n.minZ+nd/2);
+    notchMesh.receiveShadow = true; notchMesh.castShadow = true;
+    staticGroup.add(notchMesh);
+    const e = new THREE.LineSegments(new THREE.EdgesGeometry(notchMesh.geometry), new THREE.LineBasicMaterial({color:'#E7A9B6'}));
+    e.position.copy(notchMesh.position); staticGroup.add(e);
+  }
+
+  const m = Math.max(W,D);
+  sun.position.set(-m*0.35, m*1.6+300, m*0.55);
+  sun.target.position.set(0,0,0);
+  const s = m*0.85;
+  Object.assign(sun.shadow.camera, {left:-s, right:s, top:s, bottom:-s, near:10, far:m*4+1500});
+  sun.shadow.camera.updateProjectionMatrix();
+  fadeKey = '';
+}
+
+function fitCameras(){
+  const {w:W, d:D} = state.room;
+  const m = Math.max(W,D);
+  persp.position.set(m*0.55, m*1.15, m*1.3);
+  ctrl3d.target.set(0, 30, 0); ctrl3d.update();
+  ortho.position.set(0, 2500, 0.01);
+  ctrlTop.target.set(0,0,0);
+  ortho.zoom = 1; updateOrtho(); ctrlTop.update();
+}
+function updateOrtho(){
+  const {w:W, d:D} = state.room;
+  const hh = Math.max(D, W/aspect) * 1.3 / 2;
+  ortho.left = -hh*aspect; ortho.right = hh*aspect; ortho.top = hh; ortho.bottom = -hh;
+  ortho.updateProjectionMatrix();
+}
+function resize(){
+  const r = stage.getBoundingClientRect();
+  if(r.width<10 || r.height<10) return;
+  aspect = r.width / r.height;
+  renderer.setSize(r.width, r.height, false);
+  labelRenderer.setSize(r.width, r.height);
+  persp.aspect = aspect; persp.updateProjectionMatrix();
+  updateOrtho();
+}
+new ResizeObserver(resize).observe(stage);
+
+/* ================= 牆面座標 ================= */
+function wallFrame(wall, offset){
+  const {w:W, d:D} = state.room;
+  switch(wall){
+    case 'N': return {x:offset, z:0, rot:0};
+    case 'S': return {x:offset, z:D, rot:Math.PI};
+    case 'W': return {x:0, z:offset, rot:Math.PI/2};
+    default:  return {x:W, z:offset, rot:-Math.PI/2};
+  }
+}
+function l2r(f, lx, lz){
+  const c = Math.cos(f.rot), s = Math.sin(f.rot);
+  return {x: f.x + lx*c + lz*s, z: f.z - lx*s + lz*c};
+}
+function rectFromLocal(f, x1,z1, x2,z2){
+  const a = l2r(f,x1,z1), b = l2r(f,x2,z2);
+  return {minX:Math.min(a.x,b.x), maxX:Math.max(a.x,b.x), minZ:Math.min(a.z,b.z), maxZ:Math.max(a.z,b.z)};
+}
+function clampWall(it){
+  const len = wallLen(it.wall);
+  it.w = Math.min(it.w, len);
+  it.offset = Math.min(Math.max(it.offset, it.w/2), len - it.w/2);
+}
+
+/* ================= 物件外觀 ================= */
+const B = {};
+B.bed = (it,g) => {
+  const {w,d,h,color} = it;
+  g.add(at(rbox(w, h*0.45, d, color, 4), 0, h*0.225, 0));
+  g.add(at(rbox(w-6, h*0.4, d-8, '#FFFDF8', 5), 0, h*0.65, 2));
+  const top = h*0.85;
+  const n = w>=120 ? 2 : 1;
+  const pw = Math.min(60, (w-20)/n - 8);
+  for(let i=0;i<n;i++){
+    const px = n===1 ? 0 : (i===0?-1:1)*(w/4);
+    g.add(at(rbox(pw, 10, 32, '#FFFFFF', 4.5), px, top+5, -d/2+26));
+  }
+  g.add(at(rbox(w-2, 5, d*0.55, lighten(color,.35), 2.4), 0, top+2.5, d/2 - d*0.275 - 2));
+  g.add(at(rbox(w, h+30, 7, darken(color,.05), 3), 0, (h+30)/2, -d/2+3.5));
+};
+B.bed_single = B.bed; B.bed_double = B.bed;
+B.desk = (it,g) => {
+  const {w,d,h,color} = it;
+  g.add(at(rbox(w,5,d,color,2), 0, h-2.5, 0));
+  const lc = darken(color,.15);
+  for(const sx of [-1,1]) for(const sz of [-1,1]) g.add(at(rbox(5,h-5,5,lc,1.5), sx*(w/2-5), (h-5)/2, sz*(d/2-5)));
+};
+B.chair = (it,g) => {
+  const {w,d,h,color} = it;
+  const sh = Math.min(45, h*0.55);
+  g.add(at(rbox(w,6,d,color,3), 0, sh, 0));
+  const lc = darken(color,.18);
+  for(const sx of [-1,1]) for(const sz of [-1,1]) g.add(at(rbox(4,sh-3,4,lc,1.5), sx*(w/2-5), (sh-3)/2, sz*(d/2-5)));
+  g.add(at(rbox(w, h-sh, 5, color, 2.4), 0, sh+(h-sh)/2, d/2-2.5));
+};
+B.wardrobe = (it,g) => {
+  const {w,d,h,color} = it;
+  g.add(at(rbox(w,h,d,color,4), 0, h/2, 0));
+  if(w>60) g.add(at(rbox(1.5,h-16,1.5,darken(color,.2),.5), 0, h/2, d/2+0.4));
+  const xs = w>60 ? [-6,6] : [w/2-10];
+  for(const x of xs) g.add(at(rbox(3,h*0.18,3,'#FFFFFF',1.2), x, h*0.55, d/2+1.5));
+};
+B.bookshelf = (it,g) => {
+  const {w,d,h,color} = it, t = 3;
+  const BC = ['#F497A9','#9FD8C3','#B9A5E8','#FFD66B','#8CC8EE'];
+  g.add(at(rbox(w,h,t,color,1), 0, h/2, -d/2+t/2));
+  for(const s of [-1,1]) g.add(at(rbox(t,h,d,color,1), s*(w/2-t/2), h/2, 0));
+  const n = Math.max(2, Math.round(h/40));
+  const sh = (h-t)/n;
+  for(let i=0;i<=n;i++){
+    const y = t/2 + i*sh;
+    g.add(at(rbox(w,t,d,color,1), 0, y, 0));
+    if(i<n && sh>14 && d>8){
+      let x = -w/2 + t + 2, k = i*3;
+      while(x < w/2 - t - 8){
+        const bw = 4 + (k*7)%5, bh = Math.min(sh-6, 16 + (k*13)%12);
+        g.add(at(rbox(bw, bh, Math.min(d-6,20), BC[k%5], .8), x+bw/2, y+t/2+bh/2, 0));
+        x += bw + 1 + ((k%4===0) ? 8 : 0); k++;
+      }
+    }
+  }
+};
+B.sofa = (it,g) => {
+  const {w,d,h,color} = it;
+  const aw = Math.min(18, w*0.12), ah = h*0.62;
+  g.add(at(rbox(w, h*0.45, d, color, 5), 0, h*0.225, 0));
+  g.add(at(rbox(w, h, d*0.28, darken(color,.04), 6), 0, h/2, -d/2+d*0.14));
+  for(const s of [-1,1]) g.add(at(rbox(aw, ah, d, darken(color,.06), 6), s*(w/2-aw/2), ah/2, 0));
+  const cw = (w-2*aw)/2 - 3;
+  for(const s of [-1,1]) g.add(at(rbox(cw, 12, d*0.68, lighten(color,.3), 5), s*(cw/2+1.5), h*0.45+6, d*0.14));
+};
+B.fridge = (it,g) => {
+  const {w,d,h,color} = it;
+  g.add(at(rbox(w,h,d,color,5), 0, h/2, 0));
+  g.add(at(rbox(3, Math.min(30,h*0.3), 3, '#FFFFFF', 1.2), w/2-8, h*0.62, d/2+1.5));
+  if(h>110) g.add(at(rbox(w-4,1.5,1.5,darken(color,.2),.5), 0, h*0.42, d/2+0.4));
+};
+B.tvstand = (it,g) => {
+  const {w,d,h,color} = it;
+  g.add(at(rbox(w,h,d,color,4), 0, h/2, 0));
+  const tw = w*0.8, th = tw*0.56;
+  g.add(at(rbox(tw, th, 4, '#5B5570', 2), 0, h+th/2+8, -d/2+12));
+  g.add(at(rbox(24, 8, 12, '#5B5570', 2), 0, h+4, -d/2+12));
+};
+B.dresser = (it,g) => {
+  const {w,d,h,color} = it;
+  g.add(at(rbox(w,h,d,color,4), 0, h/2, 0));
+  g.add(at(rbox(w*0.6+6, 61, 4, '#FFFFFF', 2), 0, h+31, -d/2+3));
+  g.add(at(rbox(w*0.6, 55, 4.5, '#DDEFFF', 2), 0, h+31, -d/2+3.3));
+  g.add(at(rbox(14, 3, 2, '#FFFFFF', .8), 0, h*0.7, d/2+1));
+};
+B.washer = (it,g) => {
+  const {w,d,h,color} = it;
+  g.add(at(rbox(w,h,d,color,5), 0, h/2, 0));
+  const r = Math.min(w,h)*0.28;
+  const door = new THREE.Mesh(new THREE.CylinderGeometry(r, r, 3, 32), mat('#CFE7FF'));
+  door.rotation.x = Math.PI/2; door.position.set(0, h*0.47, d/2+1);
+  g.add(door);
+  g.add(at(rbox(w-8, 8, 2, '#E4DDF0', 1), 0, h-9, d/2+0.6));
+};
+B.toilet = (it,g) => {
+  const {w,d,h,color} = it;
+  g.add(at(rbox(w, h*0.55, 20, color, 5), 0, h - h*0.275, -d/2+10));
+  const bl = Math.max(10, d-22);
+  g.add(at(rbox(w*0.82, h*0.5, bl, color, 10), 0, h*0.25, -d/2+20+bl/2));
+  g.add(at(rbox(w*0.86, 4, bl+2, '#F9C6CF', 6), 0, h*0.5+2, -d/2+20+bl/2));
+};
+B.sink = (it,g) => {
+  const {w,d,h,color} = it;
+  g.add(at(rbox(w, h-12, d-4, color, 3), 0, (h-12)/2, -2));
+  g.add(at(rbox(w, 12, d, '#FFFFFF', 4), 0, h-6, 0));
+  g.add(at(rbox(w*0.6, 2, d*0.55, '#CFEFFF', 5), 0, h+0.5, 3));
+  g.add(at(rbox(4, 14, 4, '#D9D9E3', 1.5), 0, h+7, -d/2+6));
+};
+B.shower = (it,g) => {
+  const {w,d,h,color} = it;
+  g.add(at(rbox(w, 8, d, '#FFFFFF', 3), 0, 4, 0));
+  const glass = new THREE.Mesh(new THREE.BoxGeometry(w-2, h-8, d-2), mat(color, {transparent:true, opacity:.3, depthWrite:false}));
+  glass.position.set(0, 8+(h-8)/2, 0); g.add(glass);
+  const e = new THREE.LineSegments(new THREE.EdgesGeometry(glass.geometry), new THREE.LineBasicMaterial({color:'#8CC8EE'}));
+  e.position.copy(glass.position); g.add(e);
+  g.add(at(rbox(16, 3, 16, '#D9D9E3', 1.4), 0, h-25, -d/2+15));
+};
+B.bathtub = (it,g) => {
+  const {w,d,h,color} = it;
+  // 浴缸做成「底座＋四邊缸緣」，水面凹在缸緣裡面
+  const rim = 15, t = 7;
+  g.add(at(rbox(w, h-rim, d, color, 6), 0, (h-rim)/2, 0));
+  for(const s of [-1,1]) g.add(at(rbox(w, rim, t, color, 3), 0, h-rim/2, s*(d/2-t/2)));
+  for(const s of [-1,1]) g.add(at(rbox(t, rim, d-2*t, color, 3), s*(w/2-t/2), h-rim/2, 0));
+  g.add(at(rbox(w-2*t, 9, d-2*t, '#BFE6F7', 3), 0, h-rim+4.5, 0));
+};
+B.column = (it,g) => {
+  const H = state.room.h;
+  g.add(at(rbox(it.w, H, it.d, it.color, 2), 0, H/2, 0));
+};
+B.beam = (it,g) => {
+  const H = state.room.h;
+  const m = rbox(it.w, it.h, it.d, it.color, 2, {transparent:true, opacity:.8});
+  m.castShadow = false; m.userData.beam = true;
+  g.add(at(m, 0, H-it.h/2, 0));
+  const hw = it.w/2, hd = it.d/2;
+  g.add(polyline([[-hw,.8,-hd],[hw,.8,-hd],[hw,.8,hd],[-hw,.8,hd],[-hw,.8,-hd]], '#A98BD3', true));
+};
+B.door = (it,g) => {
+  const w = it.w, H = 210;
+  g.add(at(rbox(w, H, 4, '#D7C6F2', 2), 0, H/2, 2));
+  g.add(at(rbox(w+10, 6, 6, '#FFFFFF', 1.5), 0, H+3, 2));
+  const hs = it.hinge==='R' ? 1 : -1;
+  const knob = new THREE.Mesh(new THREE.SphereGeometry(3, 16, 12), mat('#FFD66B'));
+  knob.position.set(-hs*(w/2-8), 100, 6); g.add(knob);
+  const hx = hs*w/2;
+  const pts = [];
+  for(let i=0;i<=24;i++){ const t = i/24*Math.PI/2; pts.push([hx - hs*w*Math.cos(t), w*Math.sin(t)]); }
+  const pos = [];
+  for(let i=0;i<24;i++) pos.push(hx,0,0, pts[i][0],0,pts[i][1], pts[i+1][0],0,pts[i+1][1]);
+  const geo = new THREE.BufferGeometry(); geo.setAttribute('position', new THREE.Float32BufferAttribute(pos,3));
+  const fan = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({color:'#B9A5E8', transparent:true, opacity:.28, side:THREE.DoubleSide, depthWrite:false}));
+  fan.position.y = .6; fan.userData.noFade = true; g.add(fan);
+  g.add(polyline(pts.map(p => [p[0], .9, p[1]]), '#9F84D6', true));
+  g.add(polyline([[hx,.9,0],[hx,.9,w]], '#9F84D6'));
+};
+B.window = (it,g) => {
+  const {w, sill, wh, ledge} = it;
+  const glass = new THREE.Mesh(new THREE.BoxGeometry(w, wh, 2), mat('#CFEFFF', {transparent:true, opacity:.55}));
+  glass.position.set(0, sill+wh/2, 1.5); g.add(glass);
+  const fc = '#FFFFFF';
+  g.add(at(rbox(w+8, 5, 5, fc, 1.5), 0, sill+wh+2.5, 2));
+  if(sill>3) g.add(at(rbox(w+8, 5, 5, fc, 1.5), 0, sill-2.5, 2));
+  for(const s of [-1,1]) g.add(at(rbox(5, wh, 5, fc, 1.5), s*(w/2+1.5), sill+wh/2, 2));
+  g.add(at(rbox(3, wh, 3, fc, 1), 0, sill+wh/2, 2.5));
+  for(const s of [-1,1]) g.add(at(rbox(14, wh+18, 3, '#F9C6CF', 1.4), s*(w/2+11), sill+wh/2+4, 6));
+  if(ledge>0){
+    if(sill>0) g.add(at(rbox(w, sill, ledge, '#F3E6D8', 2), 0, sill/2, ledge/2));
+    g.add(at(rbox(w-6, 5, Math.max(ledge-6,2), '#F9C6CF', 2.4), 0, sill+2.5, ledge/2));
+  }else if(sill>3){
+    g.add(at(rbox(w+10, 3, 10, fc, 1), 0, sill, 5));
+  }
+};
+const texCache = {};
+function socketTex(type){
+  if(texCache[type]) return texCache[type];
+  const c = document.createElement('canvas'); c.width = c.height = 128;
+  const x = c.getContext('2d');
+  x.fillStyle = '#FFD66B'; x.strokeStyle = '#FFFFFF'; x.lineWidth = 10;
+  x.beginPath(); x.arc(64,64,52,0,Math.PI*2); x.fill(); x.stroke();
+  x.font = '60px "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif';
+  x.textAlign = 'center'; x.textBaseline = 'middle';
+  x.fillText(SOCKET_TYPES[type] || '⚡', 64, 68);
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.userData.cached = true;
+  return texCache[type] = t;
+}
+B.socket = (it,g) => {
+  const y = socketY(it);
+  g.add(at(rbox(12, 8, 1.6, '#FFFFFF', .7), 0, y, .8));
+  const sp = new THREE.Sprite(new THREE.SpriteMaterial({map:socketTex(it.stype), depthTest:false, transparent:true}));
+  sp.scale.set(26,26,1); sp.position.set(0, y+26, 10); sp.renderOrder = 10;
+  sp.userData.baseY = y+26; sp.userData.noFade = true;
+  g.add(sp); g.userData.sprite = sp;
+  const dot = new THREE.Mesh(new THREE.CircleGeometry(7, 24), new THREE.MeshBasicMaterial({color:'#FFD66B', transparent:true, opacity:.85}));
+  dot.rotation.x = -Math.PI/2; dot.position.set(0, .7, 9); dot.userData.noFade = true; g.add(dot);
+};
+
+/* 隔間區域：算出隔間牆、門口在房間座標中的位置 */
+function zoneParts(z){
+  const b = bounds(z), {w:W, d:D} = state.room;
+  const flush = {N:Math.abs(b.minZ)<1, S:Math.abs(b.maxZ-D)<1, W:Math.abs(b.minX)<1, E:Math.abs(b.maxX-W)<1};
+  const walls = [], gaps = [], doorways = [];
+  for(const s of ['N','S','W','E']){
+    if(flush[s]) continue; // 貼著房間外牆的那一邊不用再長牆
+    const horiz = s==='N' || s==='S';
+    const a0 = horiz ? b.minX : b.minZ, a1 = horiz ? b.maxX : b.maxZ;     // 沿著牆的範圍
+    const c0 = s==='N' ? b.minZ : s==='S' ? b.maxZ-ZT : s==='W' ? b.minX : b.maxX-ZT; // 牆的厚度範圍
+    const mk = (p0,p1) => horiz ? {minX:p0,maxX:p1,minZ:c0,maxZ:c0+ZT,side:s} : {minX:c0,maxX:c0+ZT,minZ:p0,maxZ:p1,side:s};
+    if(s===z.doorSide){
+      const len = a1-a0, dw = Math.min(z.doorW, len-2*ZT);
+      let mid = (a0+a1)/2 + (z.doorOff||0);
+      mid = Math.min(Math.max(mid, a0+ZT+dw/2), a1-ZT-dw/2);
+      const g0 = mid-dw/2, g1 = mid+dw/2;
+      if(g0-a0 > 0.5) walls.push(mk(a0, g0));
+      if(a1-g1 > 0.5) walls.push(mk(g1, a1));
+      const gap = mk(g0, g1); gaps.push(gap);
+      doorways.push(horiz ? {minX:g0,maxX:g1,minZ:c0-45,maxZ:c0+ZT+45} : {minX:c0-45,maxX:c0+ZT+45,minZ:g0,maxZ:g1});
+    }else{
+      walls.push(mk(a0, a1));
+    }
+  }
+  return {walls, gaps, doorways};
+}
+const floorTexCache = {};
+function textPlane(text, width){
+  const c = document.createElement('canvas'); c.width = 512; c.height = 160;
+  const x = c.getContext('2d');
+  x.font = '700 84px "Nunito","Noto Sans TC",sans-serif';
+  x.textAlign = 'center'; x.textBaseline = 'middle';
+  x.fillStyle = 'rgba(91,78,99,.55)';
+  x.fillText(text, 256, 84);
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace;
+  const m = new THREE.Mesh(new THREE.PlaneGeometry(width, width*160/512), new THREE.MeshBasicMaterial({map:t, transparent:true, depthWrite:false}));
+  m.rotation.x = -Math.PI/2;
+  return m;
+}
+B.zone = (it,g) => {
+  const H = state.room.h, {w,d,color} = it;
+  // 地板＋磁磚格線
+  const floor = new THREE.Mesh(new THREE.PlaneGeometry(w, d), mat(color, {roughness:.6}));
+  floor.rotation.x = -Math.PI/2; floor.position.y = .5; floor.receiveShadow = true;
+  g.add(floor);
+  const lp = [], step = 30, ly = .7;
+  for(let x=-w/2+step; x<w/2; x+=step) lp.push(x,ly,-d/2, x,ly,d/2);
+  for(let z=-d/2+step; z<d/2; z+=step) lp.push(-w/2,ly,z, w/2,ly,z);
+  const lg = new THREE.BufferGeometry(); lg.setAttribute('position', new THREE.Float32BufferAttribute(lp,3));
+  g.add(new THREE.LineSegments(lg, new THREE.LineBasicMaterial({color:darken(color,.18), transparent:true, opacity:.5})));
+  const label = textPlane(it.name, Math.min(w*0.75, 140));
+  label.position.y = .9; label.userData.noTint = true; g.add(label);
+  // 隔間牆
+  const parts = zoneParts(it), wc = '#F8D3DA';
+  const toLocal = r => ({x:(r.minX+r.maxX)/2 - it.x, z:(r.minZ+r.maxZ)/2 - it.z, sx:r.maxX-r.minX, sz:r.maxZ-r.minZ});
+  parts.walls.forEach((r) => {
+    const q = toLocal(r);
+    const m = rbox(q.sx, H, q.sz, wc, 1.5, {transparent:true, opacity:1});
+    at(m, q.x, H/2, q.z); m.castShadow = false;
+    m.userData.zwall = r; g.add(m);
+  });
+  parts.gaps.forEach(r => {   // 門口上方的牆
+    const q = toLocal(r), hh = H-210;
+    if(hh > 2){ const m = rbox(q.sx, hh, q.sz, wc, 1.5, {transparent:true, opacity:1}); at(m, q.x, 210+hh/2, q.z); m.castShadow = false; m.userData.zwall = r; g.add(m); }
+    const sill = new THREE.Mesh(new THREE.PlaneGeometry(q.sx, q.sz), new THREE.MeshBasicMaterial({color:'#FFFFFF', transparent:true, opacity:.8}));
+    sill.rotation.x = -Math.PI/2; at(sill, q.x, .8, q.z); g.add(sill);
+  });
+};
+
+function builderKey(it){ return it.kind==='furniture' ? it.type : it.kind; }
+function dimText(it){
+  if(it.kind==='furniture') return `${it.w}×${it.d}×${it.h} cm`;
+  if(it.kind==='column') return `${it.w}×${it.d} cm`;
+  if(it.kind==='beam') return `樑下 ${state.room.h - it.h} cm`;
+  if(it.kind==='zone') return `${it.w}×${it.d} cm・${(it.w*it.d/10000).toFixed(1)} m²`;
+  return '';
+}
+function makeLabel(it){
+  const div = document.createElement('div');
+  div.className = 'tag tag-'+it.kind;
+  const o = new CSS2DObject(div);
+  if(isFloor(it)){
+    div.innerHTML = `<b>${esc(it.name)}</b><span>${dimText(it)}</span>`;
+    const y = it.kind==='furniture' ? it.h+12 : state.room.h+10;
+    o.position.set(0, y, 0);
+  }else if(it.kind==='socket'){
+    div.innerHTML = `<b>${SOCKET_TYPES[it.stype]} ${esc(it.stype)}</b>`;
+    o.position.set(0, socketY(it)+52, 10);
+  }else if(it.kind==='door'){
+    div.innerHTML = `<b>🚪 門</b><span>寬 ${it.w} cm</span>`;
+    o.position.set(0, 225, 10);
+  }else{
+    div.innerHTML = `<b>${LIB[it.type].icon} ${esc(it.name)}</b><span>寬 ${it.w}・離地 ${it.sill} cm</span>`;
+    o.position.set(0, it.sill+it.wh+18, 10);
+  }
+  return o;
+}
+
+function buildItemGroup(it){
+  const g = new THREE.Group();
+  (B[builderKey(it)] || B.desk)(it, g);
+  const onWall = !isFloor(it);
+  g.traverse(o => {
+    o.userData.itemId = it.id;
+    if(o.isMesh && o.material){
+      if(o.material.isMeshStandardMaterial) o.userData.base = o.material.color.clone();
+      o.userData.op0 = o.material.opacity;
+      if(onWall && !o.userData.noFade){ o.material.transparent = true; o.material.needsUpdate = true; }
+    }
+  });
+  const lab = makeLabel(it);
+  g.add(lab); g.userData.label = lab;
+  g.userData.itemId = it.id;
+  place(it, g);
+  return g;
+}
+function place(it, g){
+  g.visible = !it.hidden;
+  if(isFloor(it)){
+    g.position.set(it.x, 0, it.z);
+    g.rotation.y = -it.rot*Math.PI/2;
+  }else{
+    const f = wallFrame(it.wall, it.offset);
+    g.position.set(f.x, 0, f.z);
+    g.rotation.y = f.rot;
+  }
+}
+function rebuildItem(it){
+  const old = groups.get(it.id);
+  if(old){ itemsGroup.remove(old); disposeTree(old); }
+  const g = buildItemGroup(it);
+  itemsGroup.add(g); groups.set(it.id, g);
+  fadeKey = '';
+}
+function rebuildAll(){
+  groups.forEach(g => { itemsGroup.remove(g); disposeTree(g); });
+  groups.clear();
+  state.items.forEach(it => { if(!isFloor(it)) clampWall(it); rebuildItem(it); });
+}
+
+/* ================= 碰撞與提醒 ================= */
+function bounds(it){
+  const sw = it.rot%2===1;
+  const fw = sw ? it.d : it.w, fd = sw ? it.w : it.d;
+  return {minX:it.x-fw/2, maxX:it.x+fw/2, minZ:it.z-fd/2, maxZ:it.z+fd/2};
+}
+function overlap(a, b, t=0.5){
+  return a.minX < b.maxX-t && a.maxX > b.minX+t && a.minZ < b.maxZ-t && a.maxZ > b.minZ+t;
+}
+function doorZone(it){
+  const f = wallFrame(it.wall, it.offset);
+  const hs = it.hinge==='R' ? 1 : -1, hx = hs*it.w/2;
+  return {hinge:l2r(f,hx,0), r:it.w, rect:rectFromLocal(f, hx, 0, hx - hs*it.w, it.w)};
+}
+function hitsDoor(b, dz){
+  const r = dz.rect;
+  if(!overlap(b, r)) return false;
+  const ix1 = Math.max(b.minX,r.minX), ix2 = Math.min(b.maxX,r.maxX);
+  const iz1 = Math.max(b.minZ,r.minZ), iz2 = Math.min(b.maxZ,r.maxZ);
+  const px = Math.min(Math.max(dz.hinge.x, ix1), ix2), pz = Math.min(Math.max(dz.hinge.z, iz1), iz2);
+  return Math.hypot(px-dz.hinge.x, pz-dz.hinge.z) < dz.r - 1;
+}
+const spanRect = (it, depth) => rectFromLocal(wallFrame(it.wall, it.offset), -it.w/2, 0, it.w/2, depth);
+const OK_PAIRS = [['chair','desk'],['chair','dresser']];
+const okPair = (a,b) => OK_PAIRS.some(([x,y]) => (a.type===x&&b.type===y) || (a.type===y&&b.type===x));
+
+function evaluate(){
+  const {w:W, d:D, h:H} = state.room;
+  const errIds = new Set(), list = [], seen = new Set();
+  const add = (level, text, ids) => {
+    if(seen.has(text)) return; seen.add(text);
+    list.push({level, text, ids});
+    if(level==='err') ids.forEach(i => errIds.add(i));
+  };
+  const by = k => state.items.filter(i => i.kind===k && !i.hidden);
+  const furn = by('furniture'), cols = by('column'), beams = by('beam'), doors = by('door'), wins = by('window'), sockets = by('socket');
+  const zones = by('zone'), notch = notchRect();
+  const zp = new Map(zones.map(z => [z.id, zoneParts(z)]));
+
+  furn.forEach((f, i) => {
+    const b = bounds(f);
+    if(b.minX < -0.5 || b.minZ < -0.5 || b.maxX > W+0.5 || b.maxZ > D+0.5) add('err', `${f.name} 超出牆壁了`, [f.id]);
+    else if(notch && overlap(b, notch)) add('err', `${f.name} 放到缺角的牆裡了`, [f.id]);
+    zones.forEach(z => {
+      const p = zp.get(z.id);
+      if(p.walls.some(r => overlap(b, r))) add('err', `${f.name} 撞到${z.name}的隔間牆`, [f.id, z.id]);
+      else if(p.doorways.some(r => overlap(b, r))) add('hint', `${f.name} 擋住${z.name}的出入口`, [f.id, z.id]);
+    });
+    if(f.h > H) add('err', `${f.name} 比天花板還高`, [f.id]);
+    for(let j=i+1; j<furn.length; j++){
+      const g = furn[j];
+      if(!okPair(f,g) && overlap(b, bounds(g))) add('err', `${f.name} 和 ${g.name} 重疊`, [f.id, g.id]);
+    }
+    cols.forEach(c => { if(overlap(b, bounds(c))) add('err', `${f.name} 撞到柱子`, [f.id, c.id]); });
+    beams.forEach(bm => {
+      if(f.h > H - bm.h && overlap(b, bounds(bm)))
+        add('err', `${f.name}（高 ${f.h}cm）會頂到樑，樑下只有 ${H-bm.h}cm`, [f.id, bm.id]);
+    });
+    doors.forEach(dr => { if(hitsDoor(b, doorZone(dr))) add('err', `${f.name} 擋到門的開關範圍`, [f.id, dr.id]); });
+    wins.forEach(wn => {
+      if(wn.ledge>0 && overlap(b, spanRect(wn, wn.ledge))) add('err', `${f.name} 壓到${wn.name}`, [f.id, wn.id]);
+      else if(f.h > wn.sill && overlap(b, spanRect(wn, (wn.ledge||0)+15))) add('hint', `${f.name} 比窗台高，會擋到窗戶`, [f.id, wn.id]);
+    });
+  });
+  cols.forEach(c => doors.forEach(dr => { if(hitsDoor(bounds(c), doorZone(dr))) add('err', `柱子擋到門的開關範圍`, [c.id, dr.id]); }));
+  zones.forEach((z, i) => {
+    const b = bounds(z), p = zp.get(z.id);
+    if(b.minX < -0.5 || b.minZ < -0.5 || b.maxX > W+0.5 || b.maxZ > D+0.5) add('err', `${z.name} 超出房間了`, [z.id]);
+    if(notch && overlap(b, notch)) add('err', `${z.name} 和缺角的牆重疊`, [z.id]);
+    for(let j=i+1; j<zones.length; j++) if(overlap(b, bounds(zones[j]))) add('err', `${z.name} 和 ${zones[j].name} 重疊`, [z.id, zones[j].id]);
+    doors.forEach(dr => { if(p.walls.some(r => hitsDoor(r, doorZone(dr)))) add('err', `${z.name}的隔間牆擋到門的開關範圍`, [z.id, dr.id]); });  });
+  sockets.forEach(s => {
+    const p = l2r(wallFrame(s.wall, s.offset), 0, 0), y = socketY(s);
+    [...furn, ...cols].forEach(f => {
+      const b = bounds(f), fh = f.kind==='column' ? H : f.h;
+      if(fh > y-5 && p.x >= b.minX-3 && p.x <= b.maxX+3 && p.z >= b.minZ-3 && p.z <= b.maxZ+3)
+        add('hint', `${s.stype}被${f.name}擋住了`, [s.id, f.id]);
+    });
+  });
+
+  groups.forEach((g, id) => {
+    const bad = errIds.has(id);
+    g.traverse(o => {
+      if(o.userData.base){ o.material.color.copy(o.userData.base); if(bad) o.material.color.lerp(WARN_COLOR, .6); }
+    });
+  });
+  lastErr = errIds;
+  lastHint = new Set(list.filter(x => x.level==='hint').flatMap(x => x.ids));
+  renderStatus(list);
+  renderList();
+}
+let lastErr = new Set(), lastHint = new Set();
+
+function renderStatus(list){
+  const {w,d} = state.room, m2 = roomArea();
+  const zs = state.items.filter(i => i.kind==='zone' && !i.hidden)
+    .map(z => `${LIB[z.type].icon} ${esc(z.name)} ${(z.w*z.d/10000).toFixed(1)} m²`).join('　');
+  document.getElementById('stat').innerHTML =
+    `📐 ${(w/100).toFixed(2)} × ${(d/100).toFixed(2)} m　🏠 ${m2.toFixed(1)} m²（約 ${(m2/3.3058).toFixed(1)} 坪）${zs ? '　'+zs : ''}　📦 ${state.items.length} 件`;
+  const box = document.getElementById('warn');
+  const errs = list.filter(x => x.level==='err'), hints = list.filter(x => x.level==='hint');
+  if(!list.length){ box.innerHTML = `<div class="ok">✅ 目前擺放沒有問題</div>`; return; }
+  box.innerHTML = [...errs.map(x => ['err','⚠️',x]), ...hints.map(x => ['hint','💡',x])]
+    .map(([c,ic,x]) => `<div class="${c}" data-id="${x.ids[0]}">${ic} ${esc(x.text)}</div>`).join('');
+}
+document.getElementById('warn').addEventListener('click', e => {
+  const d = e.target.closest('[data-id]'); if(d) select(+d.dataset.id);
+});
+
+/* ================= 選取與距離 ================= */
+function updateLabelVis(){
+  groups.forEach((g, id) => {
+    const it = getItem(id);
+    g.userData.label.visible = id===selectedId && !it.hidden;
+  });
+}
+function distLabel(text, x, y, z){
+  const el = document.createElement('div'); el.className = 'dist'; el.textContent = text;
+  const o = new CSS2DObject(el); o.position.set(x,y,z); return o;
+}
+function drawSelection(){
+  clearGroup(selGroup); clearGroup(distGroup);
+  updateLabelVis();
+  const it = sel(); if(!it || it.hidden) return;
+  const g = groups.get(it.id); if(!g) return;
+  const box = new THREE.Box3();
+  g.traverse(o => { if((o.isMesh) && o.geometry){ o.geometry.computeBoundingBox(); box.union(o.geometry.boundingBox.clone().applyMatrix4(o.matrixWorld)); } });
+  g.updateMatrixWorld(true);
+  box.makeEmpty();
+  g.traverse(o => { if(o.isMesh && o.geometry){ box.union(o.geometry.boundingBox.clone().applyMatrix4(o.matrixWorld)); } });
+  if(!box.isEmpty()){
+    box.expandByScalar(2);
+    selGroup.add(new THREE.Box3Helper(box, new THREE.Color('#FF8E7A')));
+  }
+  const {w:W, d:D} = state.room;
+  const segs = [];
+  if(isFloor(it)){
+    // 量到最近的牆（包含缺角、隔間牆、柱子）
+    const b = bounds(it), cx = (b.minX+b.maxX)/2, cz = (b.minZ+b.maxZ)/2;
+    const n = nearestWalls(b, new Set([it.id]));
+    if(b.minX - n.L > 0.5) segs.push([b.minX,cz, n.L,cz]);
+    if(n.R - b.maxX > 0.5) segs.push([b.maxX,cz, n.R,cz]);
+    if(b.minZ - n.T > 0.5) segs.push([cx,b.minZ, cx,n.T]);
+    if(n.B - b.maxZ > 0.5) segs.push([cx,b.maxZ, cx,n.B]);
+  }else{
+    const f = wallFrame(it.wall, it.offset), len = wallLen(it.wall);
+    const a1 = l2r(f, -it.w/2, 18), a2 = l2r(f, -it.offset, 18);
+    const b1 = l2r(f, it.w/2, 18),  b2 = l2r(f, len - it.offset, 18);
+    // 依牆面方向，offset 是從牆的起點算
+    const s = (it.wall==='S'||it.wall==='W') ? -1 : 1;
+    const p1 = l2r(f, -s*it.w/2, 18), p2 = l2r(f, -s*it.offset, 18);
+    const q1 = l2r(f, s*it.w/2, 18),  q2 = l2r(f, s*(len - it.offset), 18);
+    if(it.offset - it.w/2 > 0.5) segs.push([p1.x,p1.z,p2.x,p2.z]);
+    if(len - it.offset - it.w/2 > 0.5) segs.push([q1.x,q1.z,q2.x,q2.z]);
+  }
+  segs.forEach(([x1,z1,x2,z2]) => {
+    const len = Math.hypot(x2-x1, z2-z1);
+    distGroup.add(polyline([[x1,1.5,z1],[x2,1.5,z2]], '#FF8E7A', true));
+    distGroup.add(distLabel(`${Math.round(len)} cm`, (x1+x2)/2, 3, (z1+z2)/2));
+  });
+}
+function select(id){
+  selectedId = (id!=null && getItem(id)) ? id : null;
+  drawSelection(); renderPanel(); renderList();
+}
+
+/* ================= 牆壁淡出 ================= */
+let fadeKey = '';
+function updateFade(){
+  const {w:W, d:D} = state.room;
+  let f = {N:false,S:false,W:false,E:false};
+  if(mode==='3d'){
+    const c = roomGroup.worldToLocal(persp.position.clone());
+    f = {N:c.z<0, S:c.z>D, W:c.x<0, E:c.x>W};
+  }
+  // 隔間牆：相機在牆的外側時變透明
+  const c = mode==='3d' ? roomGroup.worldToLocal(persp.position.clone()) : null;
+  // 隔間牆：相機在牆外側，或這面牆擋在相機和房間中央之間時，變透明
+  const zFade = r => {
+    if(!c) return false;
+    const horiz = r.side==='N' || r.side==='S';
+    const wpos = horiz ? (r.minZ+r.maxZ)/2 : (r.minX+r.maxX)/2;
+    const cp = horiz ? c.z : c.x, mid = horiz ? D/2 : W/2;
+    const outside = (r.side==='N' && c.z < r.minZ) || (r.side==='S' && c.z > r.maxZ) || (r.side==='W' && c.x < r.minX) || (r.side==='E' && c.x > r.maxX);
+    return outside || (cp - wpos) * (mid - wpos) < 0;
+  };
+  const zm = [];
+  groups.forEach(g => g.traverse(o => { if(o.userData.zwall) zm.push(o); }));
+  const zKey = zm.map(o => zFade(o.userData.zwall) ? 1 : 0).join('');
+  const key = mode + JSON.stringify(f) + zKey;
+  if(key===fadeKey) return;
+  fadeKey = key;
+  for(const k in walls){
+    const m = walls[k].material;
+    m.opacity = f[k] ? 0.13 : 1; m.depthWrite = !f[k];
+  }
+  if(notchMesh){
+    const cr = state.room.notch.corner, nf = f[cr[0]] || f[cr[1]];
+    notchMesh.material.opacity = nf ? 0.2 : 1; notchMesh.material.depthWrite = !nf;
+  }
+  zm.forEach(o => { const fd = zFade(o.userData.zwall); o.material.opacity = fd ? 0.18 : 1; o.material.depthWrite = !fd; });
+  groups.forEach((g, id) => {
+    const it = getItem(id); if(!it) return;
+    if(it.kind==='beam'){
+      g.traverse(o => { if(o.userData.beam){ o.material.opacity = mode==='top' ? 0.35 : 0.8; } });
+      return;
+    }
+    if(isFloor(it)) return;
+    const fd = f[it.wall];
+    g.traverse(o => {
+      if(o.isMesh && o.material && !o.userData.noFade){
+        const op0 = o.userData.op0 ?? 1;
+        o.material.opacity = op0 * (fd ? 0.15 : 1);
+        o.material.depthWrite = !fd && op0 >= 1;
+      }
+    });
+  });
+}
+
+/* ================= 操作：拖曳 ================= */
+const ray = new THREE.Raycaster();
+const ndc = new THREE.Vector2();
+const floorPlane = new THREE.Plane(new THREE.Vector3(0,1,0), 0);
+function setRay(e){
+  const r = renderer.domElement.getBoundingClientRect();
+  ndc.set(((e.clientX-r.left)/r.width)*2-1, -((e.clientY-r.top)/r.height)*2+1);
+  ray.setFromCamera(ndc, cam());
+}
+function pick(){
+  const hits = ray.intersectObjects(itemsGroup.children, true)
+    .filter(h => !h.object.isLine && h.object.userData.itemId!=null && groups.get(h.object.userData.itemId)?.visible);
+  if(!hits.length) return null;
+  // 優先選家具，其次是樑，最後才是隔間區域的地板
+  const pri = id => { const k = getItem(id)?.kind; return k==='zone' ? 2 : k==='beam' ? 1 : 0; };
+  let best = null;
+  for(const h of hits){ const id = h.object.userData.itemId; if(best==null || pri(id) < pri(best)) best = id; }
+  return best;
+}
+function floorPoint(){
+  const p = new THREE.Vector3();
+  if(!ray.ray.intersectPlane(floorPlane, p)) return null;
+  return roomGroup.worldToLocal(p);
+}
+const snap = v => Math.round(v/5)*5;
+/* 會擋住家具的「牆」：缺角、隔間牆、柱子 */
+function obstacles(exclude){
+  const rs = [], n = notchRect();
+  if(n) rs.push(n);
+  state.items.forEach(i => {
+    if(i.hidden || exclude.has(i.id)) return;
+    if(i.kind==='column') rs.push(bounds(i));
+    if(i.kind==='zone') rs.push(...zoneParts(i).walls);
+  });
+  return rs;
+}
+function nearestWalls(b, exclude){
+  const {w:W, d:D} = state.room;
+  let L = 0, R = W, T = 0, Bm = D;
+  for(const r of obstacles(exclude)){
+    if(r.minZ < b.maxZ-0.5 && r.maxZ > b.minZ+0.5){
+      if(r.maxX <= b.minX+0.5) L = Math.max(L, r.maxX);
+      if(r.minX >= b.maxX-0.5) R = Math.min(R, r.minX);
+    }
+    if(r.minX < b.maxX-0.5 && r.maxX > b.minX+0.5){
+      if(r.maxZ <= b.minZ+0.5) T = Math.max(T, r.maxZ);
+      if(r.minZ >= b.maxZ-0.5) Bm = Math.min(Bm, r.minZ);
+    }
+  }
+  return {L, R, T, B:Bm};
+}
+function moveFloor(it, x, z, exclude=new Set([it.id])){
+  const {w:W, d:D} = state.room;
+  it.x = Math.min(Math.max(snap(x), -100), W+100);
+  it.z = Math.min(Math.max(snap(z), -100), D+100);
+  // 靠牆時自動吸附貼齊（也會貼齊缺角、隔間牆、柱子）
+  const b = bounds(it), M = 8, n = nearestWalls(b, exclude);
+  if(Math.abs(b.minX-n.L) < M) it.x += n.L-b.minX; else if(Math.abs(b.maxX-n.R) < M) it.x += n.R-b.maxX;
+  if(Math.abs(b.minZ-n.T) < M) it.z += n.T-b.minZ; else if(Math.abs(b.maxZ-n.B) < M) it.z += n.B-b.maxZ;
+}
+/* 隔間區域會依位置改變牆的形狀，所以要重畫；其他物件只要移動 */
+function refresh(it){ if(it.kind==='zone') rebuildItem(it); else place(it, groups.get(it.id)); }
+function moveWall(it, p){
+  const {w:W, d:D} = state.room;
+  const dists = {N:Math.abs(p.z), S:Math.abs(D-p.z), W:Math.abs(p.x), E:Math.abs(W-p.x)};
+  it.wall = Object.keys(dists).sort((a,b) => dists[a]-dists[b])[0];
+  it.offset = snap((it.wall==='N'||it.wall==='S') ? p.x : p.z);
+  clampWall(it);
+}
+
+let drag = null, down = null;
+stage.addEventListener('pointerdown', e => {
+  if(e.target !== renderer.domElement) return;
+  if(e.pointerType==='mouse' && e.button!==0) return;
+  setRay(e);
+  const id = pick();
+  down = {x:e.clientX, y:e.clientY, id};
+  if(id!=null && !drag){
+    if(selectedId!==id) select(id);
+    const it = getItem(id), p = floorPoint();
+    if(p){
+      drag = {id, pid:e.pointerId, moved:false, dx: isFloor(it) ? it.x-p.x : 0, dz: isFloor(it) ? it.z-p.z : 0, inside:[]};
+      // 拖曳隔間區域時，裡面的家具一起移動
+      if(it.kind==='zone'){
+        const b = bounds(it);
+        drag.inside = state.items.filter(i => (i.kind==='furniture'||i.kind==='column') && !i.hidden &&
+          i.x > b.minX && i.x < b.maxX && i.z > b.minZ && i.z < b.maxZ).map(i => ({it:i, ox:i.x-it.x, oz:i.z-it.z}));
+      }
+      activeCtrl().enabled = false;
+      renderer.domElement.style.cursor = 'grabbing';
+    }
+  }
+}, {capture:true});
+window.addEventListener('pointermove', e => {
+  if(!drag){
+    if(e.target===renderer.domElement && e.pointerType==='mouse' && !e.buttons){
+      setRay(e); renderer.domElement.style.cursor = pick()!=null ? 'grab' : 'default';
+    }
+    return;
+  }
+  if(e.pointerId!==drag.pid) return;
+  setRay(e);
+  const p = floorPoint(); if(!p) return;
+  const it = getItem(drag.id);
+  const prevWall = it.wall;
+  if(isFloor(it)) moveFloor(it, p.x+drag.dx, p.z+drag.dz, new Set([it.id, ...drag.inside.map(c => c.it.id)]));
+  else moveWall(it, p);
+  drag.moved = true;
+  refresh(it);
+  drag.inside.forEach(c => { c.it.x = it.x+c.ox; c.it.z = it.z+c.oz; place(c.it, groups.get(c.it.id)); });
+  if(it.wall!==prevWall) fadeKey = '';
+  evaluate(); drawSelection(); syncPositionFields(it);
+});
+function endPointer(e){
+  if(drag && e.pointerId===drag.pid){
+    activeCtrl().enabled = true;
+    renderer.domElement.style.cursor = 'default';
+    if(drag.moved){ commit(); renderPanel(); }
+    drag = null;
+  }else if(down && down.id==null && Math.hypot(e.clientX-down.x, e.clientY-down.y) < 5){
+    select(null);
+  }
+  down = null;
+}
+window.addEventListener('pointerup', endPointer);
+window.addEventListener('pointercancel', endPointer);
+
+window.addEventListener('keydown', e => {
+  if(e.target.closest && e.target.closest('input,select,textarea')) return;
+  const it = sel();
+  if(e.key==='Escape'){ select(null); return; }
+  if(!it) return;
+  if(e.key==='r' || e.key==='R'){ rotateItem(it); }
+  else if(e.key==='Delete' || e.key==='Backspace'){ e.preventDefault(); deleteItem(it); }
+  else if(e.key.startsWith('Arrow')){
+    e.preventDefault();
+    const s = e.shiftKey ? 1 : 5;
+    const dx = e.key==='ArrowLeft' ? -s : e.key==='ArrowRight' ? s : 0;
+    const dz = e.key==='ArrowUp' ? -s : e.key==='ArrowDown' ? s : 0;
+    if(isFloor(it)){ it.x += dx; it.z += dz; }
+    else { it.offset += (it.wall==='N'||it.wall==='S') ? dx : dz; clampWall(it); }
+    refresh(it); commit(); syncPositionFields(it);
+  }
+});
+
+/* ================= 物件動作 ================= */
+function commit(){ evaluate(); drawSelection(); save(); }
+function addItem(type){
+  const it = makeItem(type, state.room, state.nextId++);
+  if(it.kind==='beam'){ it.z = it.d/2; }
+  if(!isFloor(it)){
+    // 找一面還有空間的牆
+    clampWall(it);
+  }
+  state.items.push(it);
+  rebuildItem(it); select(it.id); commit();
+  toast(`已新增「${it.name}」，拖曳它來調整位置`);
+}
+function rotateItem(it){
+  if(it.kind==='zone'){
+    const order = ['N','E','S','W'];
+    it.doorSide = order[(order.indexOf(it.doorSide)+1)%4];
+    rebuildItem(it); commit(); renderPanel();
+    toast(`門口改到${SIDE_NAMES[it.doorSide]}`);
+    return;
+  }
+  if(isFloor(it)){ it.rot = (it.rot+1)%4; place(it, groups.get(it.id)); }
+  else if(it.kind==='door'){ it.hinge = it.hinge==='R' ? 'L' : 'R'; rebuildItem(it); }
+  else return;
+  commit(); renderPanel();
+}
+function duplicateItem(it){
+  const c = JSON.parse(JSON.stringify(it));
+  c.id = state.nextId++;
+  if(isFloor(c)){ c.x += 20; c.z += 20; } else { c.offset += c.w + 10; clampWall(c); }
+  state.items.push(c); rebuildItem(c); select(c.id); commit();
+  toast(`已複製「${c.name}」`);
+}
+function deleteItem(it){
+  const g = groups.get(it.id);
+  if(g){ itemsGroup.remove(g); disposeTree(g); groups.delete(it.id); }
+  state.items = state.items.filter(i => i.id!==it.id);
+  select(null); commit();
+  toast(`已刪除「${it.name}」`);
+}
+
+/* ================= 左側面板 ================= */
+const libEl = document.getElementById('lib');
+let libCat = 'furn';
+function renderLib(){
+  libEl.innerHTML = Object.entries(LIB).filter(([,L]) => L.cat===libCat).map(([k,L]) => {
+    let size = '';
+    if(L.kind==='furniture'||L.kind==='column') size = `${L.w}×${L.d}`;
+    else if(L.kind==='beam') size = '橫跨天花板';
+    else if(L.kind==='zone') size = `${L.w}×${L.d}・有隔間牆`;
+    else if(L.kind==='door') size = `寬 ${L.w}`;
+    else if(L.kind==='window') size = L.ledge ? `深 ${L.ledge}` : `寬 ${L.w}`;
+    else size = '牆面標記';
+    return `<button data-type="${k}"><i>${L.icon}</i><b>${L.name}</b><small>${size}</small></button>`;
+  }).join('');
+  document.getElementById('libNote').textContent = CAT_NOTE[libCat];
+  document.querySelectorAll('#libTabs button').forEach(b => b.classList.toggle('on', b.dataset.cat===libCat));
+}
+document.getElementById('libTabs').addEventListener('click', e => {
+  const b = e.target.closest('button'); if(!b) return; libCat = b.dataset.cat; renderLib();
+});
+libEl.addEventListener('click', e => { const b = e.target.closest('button'); if(b) addItem(b.dataset.type); });
+
+const selBox = document.getElementById('selBox');
+function num(label, key, min, max, val, unit='cm', wide=false){
+  return `<label class="f${wide?' wide':''}"><span>${label}</span><input type="number" data-k="${key}" min="${min}" max="${max}" step="1" value="${Math.round(val)}"><em>${unit}</em></label>`;
+}
+function pick1(label, key, opts, val, wide=false){
+  return `<label class="f${wide?' wide':''}"><span>${label}</span><select data-k="${key}">${
+    opts.map(([v,t]) => `<option value="${v}"${v===val?' selected':''}>${t}</option>`).join('')}</select></label>`;
+}
+const wallOpts = Object.entries(WALL_NAMES);
+function posLabel(it){ return (it.wall==='N'||it.wall==='S') ? '中心距左側牆' : '中心距上方牆'; }
+function renderPanel(){
+  const it = sel();
+  if(!it){
+    selBox.innerHTML = `<p class="empty">👆 點選房間裡的物件就能編輯<br><small>拖曳移動・R 旋轉・Delete 刪除・方向鍵微調</small></p>`;
+    return;
+  }
+  const L = LIB[it.type];
+  const kindText = {furniture:'家具', column:'柱子／牆角凸出', beam:'天花板的樑', door:'門', window:'窗戶', socket:'插座位置', zone:'隔間區域'}[it.kind];
+  let h = `<div class="sel-head"><div class="sel-icon">${L.icon}</div><div><b>${esc(it.name)}</b><small>${kindText}</small></div></div>`;
+  const H = state.room.h;
+  let btns = [];
+  if(it.kind==='furniture'){
+    h += `<div class="grid3">
+      <label class="f wide"><span>名稱</span><input type="text" data-k="name" maxlength="12" value="${esc(it.name)}"></label>
+      ${num('寬', 'w', 10, 600, it.w)}${num('深', 'd', 10, 600, it.d)}${num('高', 'h', 5, 400, it.h)}</div>`;
+    h += `<div class="swatches">${PALETTE.map(c => `<button data-color="${c}" class="${c===it.color?'on':''}" style="background:${c}" title="換顏色"></button>`).join('')}</div>`;
+    btns = ['rot','dup','del'];
+  }else if(it.kind==='column'){
+    h += `<div class="grid2">${num('寬', 'w', 5, 1500, it.w)}${num('深', 'd', 5, 1500, it.d)}</div>
+      <div class="info">柱子高度會自動等於天花板高（${H} cm）。拉長成細長條就能當隔間牆或牆角凸出。</div>`;
+    btns = ['rot','dup','del'];
+  }else if(it.kind==='beam'){
+    h += `<div class="grid3">${num('長度', 'w', 20, 1500, it.w)}${num('寬度', 'd', 10, 200, it.d)}${num('樑深', 'h', 10, 150, it.h)}</div>
+      <div class="info">📏 樑下高度：<b>${H - it.h} cm</b><br>比這個高的家具放在樑下面會被標成紅色。</div>`;
+    btns = ['rot','dup','del'];
+  }else if(it.kind==='zone'){
+    const m2 = it.w*it.d/10000;
+    h += `<div class="grid3">
+      <label class="f wide"><span>區域名稱</span><input type="text" data-k="name" maxlength="10" value="${esc(it.name)}"></label>
+      ${num('寬', 'w', 60, 1000, it.w)}${num('長', 'd', 60, 1000, it.d)}${num('門口寬', 'doorW', 40, 300, it.doorW)}</div>
+      <div class="grid2" style="margin-top:8px">${pick1('門口在哪一邊','doorSide',Object.entries(SIDE_NAMES),it.doorSide)}${num('門口偏移','doorOff',-500,500,it.doorOff||0)}</div>
+      <div class="swatches">${ZONE_PALETTE.map(c => `<button data-color="${c}" class="${c===it.color?'on':''}" style="background:${c}" title="換地板顏色"></button>`).join('')}</div>
+      <div class="info">📐 面積 <b>${m2.toFixed(1)} m²</b>（約 ${(m2/3.3058).toFixed(1)} 坪）<br>貼著房間外牆的那一邊不會再長隔間牆。拖曳區域時，裡面的家具會一起移動。門口偏移可以把門口往旁邊挪（正數＝往右或往下）。</div>`;
+    btns = ['rot','dup','del'];
+  }else if(it.kind==='door'){
+    h += `<div class="grid2">${pick1('在哪面牆','wall',wallOpts,it.wall)}${num(posLabel(it),'offset',0,wallLen(it.wall),it.offset)}
+      ${num('門寬','w',50,200,it.w)}${pick1('開門方向','hinge',[['L','門軸在左'],['R','門軸在右']],it.hinge)}</div>
+      <div class="info">地上的紫色扇形是門打開會掃過的範圍，家具放進去會警告。</div>`;
+    btns = ['rot','del'];
+  }else if(it.kind==='window'){
+    h += `<div class="grid2">${pick1('在哪面牆','wall',wallOpts,it.wall)}${num(posLabel(it),'offset',0,wallLen(it.wall),it.offset)}
+      ${num('窗寬','w',30,800,it.w)}${num('窗戶高度','wh',30,250,it.wh)}
+      ${num('窗台離地','sill',0,200,it.sill)}${num('窗台深度','ledge',0,120,it.ledge)}</div>
+      <div class="info">窗台深度設 0 就是一般窗戶；設成 40～60 就是可以坐的凸窗窗台。</div>`;
+    btns = ['dup','del'];
+  }else{
+    h += `<div class="grid2">${pick1('在哪面牆','wall',wallOpts,it.wall)}${num(posLabel(it),'offset',0,wallLen(it.wall),it.offset)}
+      ${pick1('類型','stype',Object.keys(SOCKET_TYPES).map(k=>[k,SOCKET_TYPES[k]+' '+k]),it.stype,true)}</div>
+      <div class="info">插座會用黃色圓圈標示，就算被家具擋住也看得到。冷氣插座預設在高處。</div>`;
+    btns = ['dup','del'];
+  }
+  const BT = {rot: it.kind==='door' ? ['🔄 換開門方向','lav'] : it.kind==='zone' ? ['🔄 換門口方向','lav'] : ['🔄 旋轉 90°','lav'], dup:['📋 複製',''], del:['🗑️ 刪除','danger']};
+  h += `<div class="btns">${btns.map(b => `<button class="btn ${BT[b][1]}" data-act="${b}">${BT[b][0]}</button>`).join('')}</div>`;
+  selBox.innerHTML = h;
+}
+function syncPositionFields(it){
+  if(it.id!==selectedId) return;
+  const o = selBox.querySelector('[data-k=offset]');
+  const w = selBox.querySelector('[data-k=wall]');
+  if(w && w.value!==it.wall){ renderPanel(); return; }
+  if(o) o.value = Math.round(it.offset);
+}
+function applyField(input, final){
+  const it = sel(); if(!it) return;
+  const k = input.dataset.k; if(!k) return;
+  let v = input.value;
+  if(input.type==='number'){
+    v = parseFloat(v);
+    const min = +input.min, max = +input.max;
+    if(!isFinite(v)){ if(final) renderPanel(); return; }
+    if(!final && (v<min || v>max)) return;
+    v = Math.round(Math.min(max, Math.max(min, v)));
+    if(final) input.value = v;
+  }else if(input.type==='text'){
+    v = v.trim() || LIB[it.type].name;
+  }
+  it[k] = v;
+  if(k==='wall') it.offset = wallLen(v)/2;
+  if(!isFloor(it)) clampWall(it);
+  rebuildItem(it); commit();
+  if(final && (input.tagName==='SELECT' || k==='h' || k==='w' || k==='offset')) renderPanel();
+}
+selBox.addEventListener('input', e => { if(e.target.matches('input')) applyField(e.target, false); });
+selBox.addEventListener('change', e => { if(e.target.matches('input,select')) applyField(e.target, true); });
+selBox.addEventListener('click', e => {
+  const it = sel(); if(!it) return;
+  const c = e.target.closest('[data-color]');
+  if(c){ it.color = c.dataset.color; rebuildItem(it); commit(); renderPanel(); return; }
+  const a = e.target.closest('[data-act]'); if(!a) return;
+  if(a.dataset.act==='rot') rotateItem(it);
+  if(a.dataset.act==='dup') duplicateItem(it);
+  if(a.dataset.act==='del') deleteItem(it);
+});
+
+/* 物件清單 */
+let listFilter = 'all';
+const listEl = document.getElementById('list');
+function rowSub(it){
+  if(it.kind==='furniture') return `${it.w}×${it.d}×${it.h} cm`;
+  if(it.kind==='column') return `${it.w}×${it.d} cm`;
+  if(it.kind==='beam') return `長 ${it.w} cm・樑下 ${state.room.h - it.h} cm`;
+  if(it.kind==='socket') return `${it.stype}・${WALL_NAMES[it.wall]}`;
+  if(it.kind==='zone') return `${it.w}×${it.d} cm・${(it.w*it.d/10000).toFixed(1)} m²`;
+  return `寬 ${it.w} cm・${WALL_NAMES[it.wall]}`;
+}
+function renderList(){
+  const catOrder = {furn:0, bath:1, struct:2};
+  const items = state.items
+    .filter(it => listFilter==='all' || LIB[it.type].cat===listFilter)
+    .sort((a,b) => catOrder[LIB[a.type].cat]-catOrder[LIB[b.type].cat] || a.id-b.id);
+  document.getElementById('listCount').textContent = `共 ${state.items.length} 件`;
+  if(!items.length){ listEl.innerHTML = `<div class="none">這一類還沒有物件</div>`; return; }
+  listEl.innerHTML = items.map(it => {
+    const bad = lastErr.has(it.id), hint = lastHint.has(it.id);
+    const cls = ['row', it.id===selectedId?'on':'', bad?'bad':'', it.hidden?'off':''].join(' ');
+    return `<div class="${cls}" data-id="${it.id}">
+      <span class="ic">${LIB[it.type].icon}</span>
+      <span class="nm"><b>${esc(it.name)}</b><small>${rowSub(it)}</small></span>
+      ${bad ? '<span class="flag" title="有擺放問題">⚠️</span>' : hint ? '<span class="flag" title="有提醒">💡</span>' : ''}
+      <button data-act="eye" title="${it.hidden?'顯示':'隱藏'}">${it.hidden?'🙈':'👁️'}</button>
+      <button data-act="del" title="刪除">🗑️</button>
+    </div>`;
+  }).join('');
+}
+document.getElementById('listTabs').addEventListener('click', e => {
+  const b = e.target.closest('button'); if(!b) return;
+  listFilter = b.dataset.f;
+  document.querySelectorAll('#listTabs button').forEach(x => x.classList.toggle('on', x===b));
+  renderList();
+});
+listEl.addEventListener('click', e => {
+  const row = e.target.closest('.row'); if(!row) return;
+  const it = getItem(+row.dataset.id); if(!it) return;
+  const act = e.target.closest('button')?.dataset.act;
+  if(act==='del'){ deleteItem(it); return; }
+  if(act==='eye'){
+    it.hidden = !it.hidden;
+    refresh(it);
+    commit();
+    toast(it.hidden ? `已隱藏「${it.name}」` : `已顯示「${it.name}」`);
+    return;
+  }
+  select(it.id);
+});
+
+/* 房間尺寸 */
+const roomInputs = {w:document.getElementById('roomW'), d:document.getElementById('roomD'), h:document.getElementById('roomH')};
+const shapeEl = document.getElementById('roomShape');
+const notchInputs = {w:document.getElementById('notchW'), d:document.getElementById('notchD')};
+function fillRoomInputs(){
+  clampNotch();
+  for(const k in roomInputs) roomInputs[k].value = state.room[k];
+  const n = state.room.notch;
+  shapeEl.value = n.corner || 'none';
+  notchInputs.w.value = n.w; notchInputs.d.value = n.d;
+  document.querySelectorAll('.notchf').forEach(el => el.style.visibility = n.corner==='none' ? 'hidden' : 'visible');
+}
+for(const k in roomInputs){
+  roomInputs[k].addEventListener('change', () => {
+    const el = roomInputs[k];
+    let v = parseFloat(el.value);
+    if(!isFinite(v)){ el.value = state.room[k]; return; }
+    v = Math.round(Math.min(+el.max, Math.max(+el.min, v)));
+    el.value = v; state.room[k] = v;
+    fillRoomInputs();
+    buildRoom(); rebuildAll(); fitCameras(); commit(); renderPanel();
+    toast('房間尺寸已更新');
+  });
+}
+function applyNotch(){
+  const n = state.room.notch;
+  const wasNone = n.corner==='none';
+  n.corner = shapeEl.value;
+  if(wasNone && n.corner!=='none'){ n.w = Math.round(state.room.w/3); n.d = Math.round(state.room.d/3); }
+  else { n.w = parseFloat(notchInputs.w.value) || n.w; n.d = parseFloat(notchInputs.d.value) || n.d; }
+  fillRoomInputs();
+  buildRoom(); rebuildAll(); commit();
+  toast(n.corner==='none' ? '房間改回長方形' : `已設定缺角 ${n.w}×${n.d} cm`);
+}
+shapeEl.addEventListener('change', applyNotch);
+notchInputs.w.addEventListener('change', applyNotch);
+notchInputs.d.addEventListener('change', applyNotch);
+
+/* 存檔按鈕 */
+document.getElementById('btnPng').addEventListener('click', () => {
+  renderer.render(scene, cam());
+  const a = document.createElement('a');
+  a.href = renderer.domElement.toDataURL('image/png');
+  a.download = 'my-room.png'; a.click();
+  toast('📸 已存成圖片');
+});
+document.getElementById('btnSample').addEventListener('click', () => {
+  if(!confirm('要載入範例房間嗎？目前的擺放會被取代。')) return;
+  state = defaultState(); reloadAll(); toast('🏡 已載入範例');
+});
+document.getElementById('btnClear').addEventListener('click', () => {
+  if(!confirm('要清空所有物件嗎？（房間尺寸會保留）')) return;
+  state.items = []; reloadAll(); toast('🧹 已清空');
+});
+function reloadAll(){ selectedId = null; fillRoomInputs(); buildRoom(); rebuildAll(); fitCameras(); commit(); renderPanel(); }
+
+/* 視角切換 */
+const TIPS = {
+  '3d':'🖱️ 拖曳家具＝移動・拖曳空白處＝轉視角・右鍵＝平移・滾輪＝縮放　⌨️ R 旋轉・Delete 刪除',
+  'top':'🖱️ 拖曳家具＝移動・拖曳空白處＝平移・滾輪＝縮放　⌨️ R 旋轉・方向鍵微調（Shift 每次 1cm）',
+};
+let tipsHidden = false;
+function renderTips(){
+  const t = document.getElementById('tips');
+  t.style.display = tipsHidden ? 'none' : '';
+  t.innerHTML = `${TIPS[mode]}<button title="關閉提示">✕</button>`;
+  t.querySelector('button').onclick = () => { tipsHidden = true; renderTips(); };
+}
+function setMode(m){
+  mode = m;
+  ctrl3d.enabled = m==='3d'; ctrlTop.enabled = m==='top';
+  document.querySelectorAll('#viewSeg button').forEach(b => b.classList.toggle('on', b.dataset.mode===m));
+  fadeKey = ''; updateLabelVis(); renderTips();
+}
+document.getElementById('viewSeg').addEventListener('click', e => {
+  const b = e.target.closest('button'); if(b) setMode(b.dataset.mode);
+});
+
+/* ================= 啟動 ================= */
+const clock = new THREE.Clock();
+function loop(){
+  requestAnimationFrame(loop);
+  const t = clock.getElapsedTime();
+  activeCtrl().update();
+  updateFade();
+  groups.forEach((g, id) => { const s = g.userData.sprite; if(s) s.position.y = s.userData.baseY + Math.sin(t*3 + id)*3; });
+  renderer.render(scene, cam());
+  labelRenderer.render(scene, cam());
+}
+fillRoomInputs();
+renderLib();
+resize();
+buildRoom();
+rebuildAll();
+fitCameras();
+setMode('3d');
+commit();
+renderPanel();
+loop();
+</script>
+</body>
+</html>
